@@ -10,7 +10,7 @@ namespace SerializePeople
     {
         static void Main(string[] args)
         {
-            Person bela = new Person("Bela", new DateTime(1991, 06, 19), Genders.Male);
+            Person bela = Person.Deserialize("Bela.txt");
             Console.WriteLine(bela.ToString());
             Console.ReadKey();
         }
