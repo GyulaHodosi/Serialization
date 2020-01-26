@@ -12,12 +12,14 @@ namespace SerializePeople
     enum Genders { Male, Female}
 
     [Serializable]
-    class Person : ISerializable
+    class Person : ISerializable, IDeserializationCallback
     {
         string Name { get; set; }
         DateTime BirthDate { get; set; }
         Genders Gender { get; set; }
-        int Age { get; set; }
+        [NonSerialized]
+        private int age;
+        int Age { get { return age; } set { age = value; } }
 
         public Person(string name, DateTime birthDate, Genders gender)
         {
@@ -47,7 +49,6 @@ namespace SerializePeople
             Name = (string)info.GetValue("Name", typeof(string));
             BirthDate = (DateTime)info.GetValue("BirthDate", typeof(DateTime));
             Gender = (Genders)info.GetValue("Gender", typeof(Genders));
-            Age = (int)info.GetValue("Age", typeof(int));
         }
 
         public void Serialize(string output)
@@ -66,6 +67,13 @@ namespace SerializePeople
             stream.Close();
 
             return person;
+        }
+
+        public void OnDeserialization(object sender)
+        {
+            int now = int.Parse(DateTime.Now.ToString("yyyyMMdd"));
+            int dob = int.Parse(BirthDate.ToString("yyyyMMdd"));
+            Age = (now - dob) / 10000;
         }
     }
 }
